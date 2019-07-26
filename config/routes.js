@@ -22,7 +22,7 @@ async function register(req, res) {
       const token = generateToken(user);
       return res
         .status(201)
-        .json({ message: "User created successfully", user, token });
+        .json({ message: "User created successfully", token });
     } else {
       return res.status(400).json({ message: "User could not be created" });
     }
@@ -33,14 +33,14 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
-    const user = await db.findBy(req.body.username);
-    if (user && bcrypt.compareSync(req.body.pasword, user.password)) {
+    const user = await db.findByName(req.body.username);
+    if (user && bcrypt.compareSync(req.body.password, user.password)) {
       const token = generateToken(user);
-      return res.status(201).json({ message: "Login successful", user, token });
+      return res.status(201).json({ message: "Login successful", token });
     } else if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      return res.status(400).json({ message: "Invalid Token" });
+      return res.status(400).json({ message: "Invalid password" });
     }
   } catch (err) {
     return res.status(500).json(err);
